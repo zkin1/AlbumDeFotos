@@ -71,8 +71,6 @@ Los nueve estados transparentes están en `public/origami/`. GSAP interpola una 
 
 ## Sonidos
 
-Howler.js reproduce un crujido breve al abrir un corazón, con volumen de 0,14 y entrada y salida suaves. Arrastrar o desplazar la esfera es silencioso. El sonido se crea y carga después de un clic, toque o tecla reales; no hay reproducción automática al cargar la página ni al barajar.
-
-Al ocultar la pestaña se detiene y necesita otra interacción para volver a habilitarse. El efecto es síntesis original local en `public/audio`; se regenera con `python scripts/prepare_audio.py`. No se utilizan grabaciones de terceros.
+El álbum funciona sin sonidos, tanto al mover la esfera como al abrir los corazones.
 
 El icono de pestaña y el indicador de carga usan el corazón de papel original. El favicon incorpora la imagen dentro del SVG para funcionar sin recursos externos y conserva su resolución.

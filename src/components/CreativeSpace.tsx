@@ -9,13 +9,11 @@ import { HEART_FRAMES, PAPER_HEIGHT, PAPER_WIDTH, preloadPaper } from "@/lib/ori
 import { ALBUM_ROTATION_MS, INITIAL_PHOTO_COUNT, images } from "@/config/images";
 import { createAlbum, rotateAlbum, shuffle, type AlbumState } from "@/lib/album";
 import { startAlbumRotation } from "@/lib/album-timer";
-import { createAlbumAudio } from "@/lib/album-audio";
 import { createSpaceScene, type SpaceScene } from "@/lib/space-scene";
 
 export function CreativeSpace() {
   const hostRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<SpaceScene | null>(null);
-  const audioRef = useRef<ReturnType<typeof createAlbumAudio> | null>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
   const alive = useRef(false);
   const [album, setAlbum] = useState<AlbumState<AlbumItem>>(() => ({ visible: withAlbumHearts(images.slice(0, INITIAL_PHOTO_COUNT)), remaining: images.slice(INITIAL_PHOTO_COUNT) }));
@@ -32,8 +30,6 @@ export function CreativeSpace() {
   useEffect(() => {
     if (!hostRef.current || !cursorRef.current) return;
     alive.current = true;
-    const audio = createAlbumAudio();
-    audioRef.current = audio;
     void preloadPaper().catch(() => { /* Opening the paper offers a retry if preloading failed. */ });
     let mounted = true;
     const first = createAlbum(images, INITIAL_PHOTO_COUNT);
@@ -65,7 +61,6 @@ export function CreativeSpace() {
     const onKey = (event: KeyboardEvent) => { if (event.key === "Escape") sceneRef.current?.select(null); };
     const onVisibility = () => {
       setVisible(!document.hidden);
-      if (document.hidden) audio.suspend();
     };
     onVisibility();
     window.addEventListener("keydown", onKey);
@@ -75,8 +70,6 @@ export function CreativeSpace() {
       alive.current = false;
       sceneRef.current?.destroy();
       sceneRef.current = null;
-      audio.destroy();
-      audioRef.current = null;
       xTo.tween.kill(); yTo.tween.kill();
       window.removeEventListener("keydown", onKey);
       document.removeEventListener("visibilitychange", onVisibility);
@@ -112,14 +105,10 @@ export function CreativeSpace() {
     return () => { tween.kill(); };
   }, [selected]);
 
-  useEffect(() => { audioRef.current?.paper(heartOpen); }, [heartOpen]);
-
   const displayItems = album.visible;
   const photoCount = displayItems.filter(item => item.heartIndex === undefined).length;
   const currentPhoto = selected === null ? null : displayItems[selected];
-  return <main className="experience relative h-dvh w-full overflow-hidden bg-white"
-    onPointerDownCapture={event=>audioRef.current?.unlock(event.nativeEvent)}
-    onKeyDownCapture={event=>audioRef.current?.unlock(event.nativeEvent)}>
+  return <main className="experience relative h-dvh w-full overflow-hidden bg-white">
     <h1 className="sr-only">Nuestro álbum de fotos</h1>
     <div ref={hostRef} className="space-canvas absolute inset-0" role="group" aria-busy={busy} aria-label={`${photoCount} fotos y 4 corazones de nuestro álbum. Arrastra o gira la rueda para moverlas. Selecciona una foto para ampliarla y pulsa Escape para cerrar. Se barajan automáticamente cada 40 segundos.`} />
     {!ready && !message && <img className="loading-heart" src={HEART_FRAMES[0]} width={PAPER_WIDTH} height={PAPER_HEIGHT} alt="" aria-hidden="true" draggable={false} />}

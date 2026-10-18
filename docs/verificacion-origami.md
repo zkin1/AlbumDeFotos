@@ -57,3 +57,9 @@ Validación final de esta versión: 38 pruebas correctas y compilación de produ
 Se elimina el efecto de arrastre, su archivo WAV y el aviso de movimiento enviado desde la escena. Se conserva el sonido del papel original y su volumen de 0,14. Las pruebas del controlador comprueban que la interacción por sí sola no reproduce audio, que solo se carga el papel y que siguen funcionando la apertura, la cancelación durante la carga, la pausa y la liberación de recursos.
 
 Validación de este cambio: 37 pruebas correctas y compilación de producción correcta, incluida TypeScript. No se realizó una escucha en un teléfono físico.
+
+## Retirada del sonido del corazón
+
+Se elimina también el sonido al abrir los corazones. Se retiran el controlador de audio, sus eventos de activación, el WAV, el generador y las pruebas exclusivas de sonido. Howler y sus tipos dejan de ser dependencias; el álbum funciona completamente en silencio.
+
+Validación de esta retirada: 33 pruebas correctas y compilación de producción correcta, incluida TypeScript. No se repitió la revisión en navegador.
