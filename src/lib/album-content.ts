@@ -4,12 +4,11 @@ import { heartMessages } from "@/config/heart-messages";
 export type AlbumItem = GalleryImage & { heartIndex?: number };
 export type HeartAnchor = { x: number; y: number; width: number };
 export const HEART_COUNT = 4;
-const slots = [2,6,11,16];
 
 export function withAlbumHearts(photos: GalleryImage[]): AlbumItem[] {
   const result: AlbumItem[] = [...photos];
   heartMessages.slice(0,HEART_COUNT).forEach((_,index)=>{
-    result.splice(Math.min(slots[index],result.length),0,{
+    result.push({
       id:`paper-heart-${index}`,src:"/origami/heart-1.webp",thumbnailSrc:"/origami/heart-1.webp",
       alt:`Corazón ${index+1}`,width:720,height:560,heartIndex:index,
     });

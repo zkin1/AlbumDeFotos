@@ -1,12 +1,13 @@
 import * as THREE from "three";
 import gsap from "gsap";
 import type { GalleryImage } from "@/config/images";
-import { withAlbumHearts, paperContains, type AlbumItem, type HeartAnchor } from "./album-content";
+import { paperContains, type AlbumItem, type HeartAnchor } from "./album-content";
 import { CAMERA_Z, FIELD_OF_VIEW, TILE_ASPECT, coverUv, expandedFrame, sceneMetrics, spherePoint } from "./geometry";
 
 type Callbacks = {
   select: (index: number | null) => void;
   cursor: (x: number, y: number) => void;
+  motion: (speed: number) => void;
   ready: () => void;
   failure: (message: string) => void;
   heart: (index: number | null, anchor?: HeartAnchor) => void;
@@ -28,7 +29,7 @@ type Card = {
   startScale: THREE.Vector2;
 };
 
-export function createSpaceScene(host: HTMLElement, items: GalleryImage[], callbacks: Callbacks) {
+export function createSpaceScene(host: HTMLElement, items: AlbumItem[], callbacks: Callbacks) {
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(FIELD_OF_VIEW, 1, 0.1, 1000);
@@ -102,8 +103,7 @@ export function createSpaceScene(host: HTMLElement, items: GalleryImage[], callb
       start: new THREE.Vector3(), startScale: new THREE.Vector2(),
     };
   };
-  const firstItems = withAlbumHearts(items);
-  let cards = firstItems.map((item, index) => makeCard(item, index, firstItems.length));
+  let cards = items.map((item, index) => makeCard(item, index, items.length));
   const meshes = cards.map(card => card.mesh);
   let metrics = sceneMetrics(width, height, cards.length);
   const layout = { tileHeight: metrics.tileHeight };
@@ -161,7 +161,7 @@ export function createSpaceScene(host: HTMLElement, items: GalleryImage[], callb
       const centerHeight = layout.tileHeight * 120 / 82;
       cards.forEach((card, index) => {
         card.start.copy(index < 10 ? card.mesh.position : new THREE.Vector3());
-        card.startScale.set(centerHeight * TILE_ASPECT, centerHeight);
+        card.startScale.set(centerHeight * (card.item.heartIndex === undefined ? TILE_ASPECT : 720/560), centerHeight);
       });
     }, [], 6);
     introTweens.to(cards, { spread: 1, duration: 1, ease: "power3.out" }, 6);
@@ -210,9 +210,8 @@ export function createSpaceScene(host: HTMLElement, items: GalleryImage[], callb
     }
   };
 
-  const setImages = async (nextPhotos: GalleryImage[]) => {
-    if (nextPhotos.length === 0) throw new Error("La selección de fotos no es válida.");
-    const nextItems = withAlbumHearts(nextPhotos);
+  const setImages = async (nextItems: AlbumItem[]) => {
+    if (nextItems.length === 0) throw new Error("La selección de fotos no es válida.");
     if (disposed || !ready || updating) throw new Error("Espera a que termine la animación.");
     const nextIds = new Set(nextItems.map(item => item.id));
     if (nextIds.size !== nextItems.length || nextItems.length === 0) throw new Error("La selección de fotos no es válida.");
@@ -350,6 +349,7 @@ export function createSpaceScene(host: HTMLElement, items: GalleryImage[], callb
       xSmooth += (xTarget - xSmooth) * smoothing; ySmooth += (yTarget - ySmooth) * smoothing;
       increment.setFromAxisAngle(axisY, xSmooth - previousX); rotation.premultiply(increment);
       increment.setFromAxisAngle(axisX, ySmooth - previousY); rotation.premultiply(increment);
+      callbacks.motion(selected === null && !updating ? Math.hypot(xSmooth-previousX,ySmooth-previousY) : 0);
       previousX = xSmooth; previousY = ySmooth;
       if (!interacted && !reducedMotion) { increment.setFromAxisAngle(autoAxis, 0.001 * frame); rotation.premultiply(increment); }
       rotation.normalize(); group.quaternion.copy(rotation); inverse.copy(rotation).invert();

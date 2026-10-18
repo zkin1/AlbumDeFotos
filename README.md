@@ -2,7 +2,7 @@
 
 Web pública: https://teamofer.vercel.app/
 
-Álbum de 61 fotografías únicas en una esfera interactiva. Se muestran 14 fotos y 4 corazones de papel y se cambian y barajan automáticamente cada 40 segundos. No hay botón «Mostrar más».
+Álbum de 61 fotografías únicas en una esfera interactiva. Se muestran 14 fotos y 4 corazones de papel y se cambian y barajan automáticamente cada 40 segundos. Los corazones y sus frases también cambian de posición, en el mismo orden que usan los controles y la esfera. No hay botón «Mostrar más».
 
 El ciclo recorre todas las fotos antes de repetir recuerdos y evita repetir una fotografía en tandas consecutivas. El temporizador se pausa al ampliar una foto o abrir un corazón, o al ocultar la pestaña; al volver a la esfera empieza un intervalo completo de 40 segundos. Las cargas lentas no generan cambios superpuestos.
 
@@ -68,3 +68,11 @@ Las cuatro frases se editan en `src/config/heart-messages.ts`. La composición d
 Admite `floating`, `floatIntensity`, `fontFamily`, `textColor`, `className`, `defaultOpen`, `onOpen` y `onClose`. Para controlarlo desde otro componente están `open` y `onOpenChange`. Su CSS está en `src/components/OrigamiHeart.css`, ya importado en el estilo global. El mensaje se dibuja en HTML al tamaño final de pantalla, fuera de la capa ampliada y filtrada del papel, para conservar letras nítidas en móvil. Conserva saltos de línea y ajusta su letra hasta un mínimo legible de 14 px; si es más largo, se lee con desplazamiento dentro del papel.
 
 Los nueve estados transparentes están en `public/origami/`. GSAP interpola una malla con pliegues correspondientes entre las posturas y reproduce la misma secuencia en sentido inverso al cerrar. No se cambian imágenes con intervalos. Los archivos comparten canvas y punta de anclaje; se precargan una sola vez. Preparación y procedencia en `docs/origami/asset-provenance.md` y `scripts/prepare-origami.mjs`.
+
+## Sonidos
+
+Howler.js reproduce un roce suave al arrastrar o desplazar la esfera y un crujido breve al abrir un corazón. Los sonidos se crean y cargan después de un clic, toque o tecla reales; no hay reproducción automática al cargar la página ni al barajar. El roce no superpone copias y tiene un volumen máximo de 0,08; el papel usa 0,14. Los archivos tienen entrada y salida suaves.
+
+Al ocultar la pestaña se detienen y necesitan otra interacción para volver a habilitarse. Los efectos son síntesis original local en `public/audio`; se regeneran con `python scripts/prepare_audio.py`. No se utilizan grabaciones de terceros.
+
+El icono de pestaña y el indicador de carga usan el corazón de papel original. El favicon incorpora la imagen dentro del SVG para funcionar sin recursos externos y conserva su resolución.

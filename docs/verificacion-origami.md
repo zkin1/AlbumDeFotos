@@ -2,7 +2,7 @@
 
 Fecha: 18 de octubre de 2026. Compilación de producción local (`next build --webpack`, `next start`), en el navegador integrado.
 
-- Composición: 14 fotografías y exactamente 4 corazones, intercalados en las posiciones 2, 6, 11 y 16. Los corazones son tarjetas de la misma escena WebGL, con la misma esfera, cuaternión, perspectiva, arrastre y rueda. No son objetos independientes superpuestos mientras están cerrados.
+- Composición: 14 fotografías y exactamente 4 corazones, barajados juntos en posiciones aleatorias. Los corazones son tarjetas de la misma escena WebGL, con la misma esfera, cuaternión, perspectiva, arrastre y rueda. No son objetos independientes superpuestos mientras están cerrados.
 - Apertura real desde una tarjeta con el mouse, apertura con Enter desde los controles del álbum, mensajes diferentes, cierre con segundo clic, Escape y clic fuera. El papel retorna al lugar de la tarjeta. También se invirtió la secuencia antes de completarse.
 - Encuadres comprobados: 1440 × 900, 390 × 844 y 844 × 390. Cambio de orientación con un corazón abierto: el papel mantiene su estado, se centra y permanece dentro del viewport.
 - Se comprobó que las fotografías siguen abriéndose con su proporción natural.
@@ -39,3 +39,15 @@ Se eliminó la ampliación CSS de una capa pequeña: el papel ahora cambia sus d
 Se comprobaron los cuatro corazones a 390 × 844, con canvas de 716 px de ancho, texto completo y cierre con un nuevo clic. El cambio a 844 × 390 recalculó el canvas y mantuvo el papel centrado. Consola sin errores ni advertencias. La prueba añadida verifica cobertura de píxeles para distintos tamaños y densidades, redondeo hacia arriba y límite de memoria. Pendiente la comprobación visual en un teléfono físico.
 
 Las 31 pruebas de código y la compilación final de producción, incluida la comprobación TypeScript, finalizaron correctamente con este cambio.
+
+## Icono, carga, orden aleatorio y audio
+
+El SVG de pestaña integra exactamente el WebP original del corazón cerrado, con encuadre ajustado y sin recursos externos. Se comprobó su renderizado real en el navegador. El antiguo rectángulo con una cruz de carga se sustituyó por el mismo corazón; la captura `album-heart-loading.jpg` conserva ese estado.
+
+La lista visible contiene una sola composición de catorce fotos y cuatro mensajes, barajada al iniciar y al cambiar de tanda. Esa misma lista alimenta tanto a React como a Three.js; cada corazón mantiene su índice de mensaje aunque cambie de posición. Las pruebas recorren 128 tandas: los cuatro corazones llegan a todas las posiciones y no entran en el mazo de fotos, y se conserva el ciclo sin fotos repetidas en tandas consecutivas. En el navegador se observaron posiciones [0, 1, 14, 17] y después [0, 4, 9, 14] en tandas diferentes.
+
+Howler.js 2.2.4 reproduce dos sonidos originales generados localmente: roce de 0,36 s y papel de 1,08 s. No se crea ningún Howl antes de una interacción real. Se verificaron con un controlador simulado el bloqueo inicial, la ausencia de reproducciones acumuladas, el límite de volumen, la cancelación de una carga tardía, la parada al ocultar la pestaña y la liberación al desmontar. Los WAV PCM mono no recortan señal y sus extremos terminan en cero. Documentación consultada: https://github.com/goldfire/howler.js#documentation.
+
+En el navegador se arrastró la esfera, se usó la rueda y se abrieron y cerraron los cuatro mensajes después de barajar. Cada frase siguió correspondiendo a su corazón. A 390 × 844, el papel conserva 358 px reales de ancho y un canvas de 716 px, sin estiramiento CSS. No hubo errores ni advertencias en consola. La valoración auditiva final del volumen en un teléfono físico sigue pendiente.
+
+Validación final de esta versión: 38 pruebas correctas y compilación de producción correcta, incluida la revisión TypeScript.
