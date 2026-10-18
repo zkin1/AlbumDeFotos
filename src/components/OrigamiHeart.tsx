@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import gsap from "gsap";
-import { createPaperActivation, drawPaper, HEART_FRAMES, heartPlacement, largestFittingFont, PAPER_HEIGHT, PAPER_WIDTH, preloadPaper, smooth } from "@/lib/origami";
+import { createPaperActivation, drawPaper, HEART_FRAMES, heartPlacement, largestFittingFont, paperCanvasSize, PAPER_HEIGHT, PAPER_WIDTH, preloadPaper, smooth } from "@/lib/origami";
 const styles={root:"origami-root",stage:"origami-stage",float:"origami-float",button:"origami-button",paper:"origami-paper",canvas:"origami-canvas",fallback:"origami-fallback",messageStage:"origami-message-stage",message:"origami-message",readHint:"origami-readHint",hint:"origami-hint"};
 
 export interface OrigamiHeartProps {
@@ -61,6 +61,7 @@ export function OrigamiHeart({
     let disposed=false;
     let frames:HTMLImageElement[]=[];
     let placement={scale:1,x:0,y:0};
+    let base={width:safeSize,height:safeSize*PAPER_HEIGHT/PAPER_WIDTH};
     let reading=false;
     const resumeProgress=progressRef.current;
     const state={progress:0};
@@ -79,7 +80,10 @@ export function OrigamiHeart({
       if(disposed)return;
       progressRef.current=state.progress;
       const movement=smooth(state.progress/0.82);
-      gsap.set(stage,{x:placement.x*movement,y:placement.y*movement,scale:1+(placement.scale-1)*movement});
+      const scale=1+(placement.scale-1)*movement;
+      const width=base.width*scale,height=base.height*scale;
+      // Resize the paper itself so mobile compositors never magnify a small raster layer.
+      gsap.set(stage,{width,height,x:(base.width-width)/2+placement.x*movement,y:(base.height-height)/2+placement.y*movement,force3D:false});
       if(frames.length)drawPaper(context,frames,movement);
       const opacity=smooth((state.progress-0.78)/0.22);
       gsap.set(text,{autoAlpha:opacity,y:(1-opacity)*3});
@@ -89,9 +93,16 @@ export function OrigamiHeart({
     const layout=()=>{
       if(disposed || !paragraphRef.current || !root.isConnected)return;
       const rect=root.getBoundingClientRect();
+      base={width:rect.width,height:rect.height};
       placement=heartPlacement(rect,{width:window.innerWidth,height:window.innerHeight});
-      // Keep HTML text at native CSS pixels, outside the scaled and filtered paper.
+      // Keep HTML text at native CSS pixels, outside the filtered paper.
       const width=rect.width*placement.scale, height=rect.height*placement.scale;
+      const resolution=paperCanvasSize(width,window.devicePixelRatio||1);
+      if(canvas.width!==resolution.width||canvas.height!==resolution.height){
+        canvas.width=resolution.width;canvas.height=resolution.height;
+      }
+      context.setTransform(resolution.width/PAPER_WIDTH,0,0,resolution.height/PAPER_HEIGHT,0,0);
+      context.imageSmoothingEnabled=true;context.imageSmoothingQuality="high";
       gsap.set(messageStage,{left:(rect.width-width)/2+placement.x,top:(rect.height-height)/2+placement.y,width,height});
       const paragraph=paragraphRef.current!;
       text.style.overflow="hidden";
@@ -117,9 +128,6 @@ export function OrigamiHeart({
     preloadPaper().then(loaded=>{
       if(disposed)return;
       frames=loaded;
-      const ratio=Math.min(window.devicePixelRatio||1,2);
-      canvas.width=Math.round(PAPER_WIDTH*ratio);canvas.height=Math.round(PAPER_HEIGHT*ratio);
-      context.setTransform(ratio,0,0,ratio,0,0);
       timeline.progress(resumeProgress).pause();
       layout();
       if(media.matches)timeline.progress(target.current?1:0).pause();

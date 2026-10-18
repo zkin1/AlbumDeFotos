@@ -84,6 +84,11 @@ export function largestFittingFont(min: number, max: number, fits: (size: number
   return low;
 }
 
+export function paperCanvasSize(displayWidth: number, pixelRatio: number) {
+  const ratio=Math.max(2,Math.min(3,Number.isFinite(pixelRatio)?pixelRatio:2));
+  return {width:Math.ceil(displayWidth*ratio),height:Math.ceil(displayWidth*PAPER_HEIGHT/PAPER_WIDTH*ratio)};
+}
+
 export function heartPlacement(rect: {left:number;top:number;width:number;height:number}, viewport: {width:number;height:number}) {
   const width=Math.min(540,viewport.width-32,(viewport.height-48)*PAPER_WIDTH/PAPER_HEIGHT);
   const scale=Math.max(0.1,width/rect.width);

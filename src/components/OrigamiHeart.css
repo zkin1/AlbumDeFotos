@@ -1,6 +1,5 @@
 .origami-root { position: relative; aspect-ratio: 720 / 560; max-width: calc(100vw - 32px); pointer-events: none; }
 .origami-stage, .origami-float, .origami-button, .origami-paper, .origami-canvas, .origami-fallback { position: absolute; inset: 0; width: 100%; height: 100%; }
-.origami-stage { transform-origin: 50% 50%; will-change: transform; }
 .origami-float { transform-origin: 50% 65%; filter: drop-shadow(0 5px 5px rgb(51 40 27 / 13%)); }
 .origami-button { border: 0; padding: 0; background: transparent; pointer-events: auto; touch-action: manipulation; border-radius: 30%; outline-offset: -12px; }
 .origami-button:disabled { cursor: progress; }
@@ -19,7 +18,6 @@
 .origami-readHint { position: absolute; top: 66%; left: 28.5%; width: 43%; text-align: center; color: #70675d; font: italic 14px Georgia, serif; pointer-events: none; }
 .origami-hint { position: absolute; left: 50%; bottom: 1%; transform: translateX(-50%); font: italic 12px Georgia, serif; color: #918b82; letter-spacing: .03em; transition: opacity .2s ease; }
 .origami-hint[data-hidden="true"] { opacity: 0; }
-@media (prefers-reduced-motion: reduce) { .origami-stage { will-change: auto; } }
 
 
 .origami-message[role=region]:not([inert]) { pointer-events: auto; }

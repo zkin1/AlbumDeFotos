@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
-import { createPaperActivation, affine, HEART_FRAMES, heartPlacement, largestFittingFont, PAPER_POSES, PAPER_TRIANGLES, paperTransition, smooth } from "../src/lib/origami";
+import { createPaperActivation, affine, HEART_FRAMES, heartPlacement, paperCanvasSize, largestFittingFont, PAPER_POSES, PAPER_TRIANGLES, paperTransition, smooth } from "../src/lib/origami";
 
 test("paper transitions reproduce all nine reference poses continuously",()=>{
   for(let i=0;i<9;i++)assert.deepEqual(paperTransition(i/8).points,PAPER_POSES[i]);
@@ -85,4 +85,17 @@ test("keyboard and assistive activation remain available without a pointer press
   activation.pointerDown(0);
   assert.equal(activation.click(0),true);
   assert.equal(activation.click(1),false,"Keyboard activation also consumes any prior press");
+});
+
+test("paper backing pixels cover the final open size on high-density phones",()=>{
+  for(const width of [288,358,398,540])for(const ratio of [1,1.5,2,3]){
+    const pixels=paperCanvasSize(width,ratio),density=Math.max(2,ratio);
+    assert.ok(pixels.width>=width*density);
+    assert.ok(pixels.height>=width*560/720*density);
+    assert.ok(pixels.width-width*density<1);
+    assert.ok(pixels.height-width*560/720*density<1);
+  }
+  assert.deepEqual(paperCanvasSize(358,3),{width:1074,height:836});
+  assert.deepEqual(paperCanvasSize(540,5),paperCanvasSize(540,3));
+  for(const ratio of [NaN,Infinity,0,-1])assert.deepEqual(paperCanvasSize(358,ratio),paperCanvasSize(358,1));
 });

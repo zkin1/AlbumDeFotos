@@ -31,3 +31,11 @@ El texto y su aviso de desplazamiento se renderizan fuera de la capa del papel q
 Se comprobaron los cuatro mensajes a 390 × 844: todos caben completos, con tamaños nativos entre 16,25 y 18,75 px y sin ancestros con escala o filtros. La cuarta frase conserva el encuadre al cambiar a 844 × 390 y 1440 × 900. A 320 × 568 se conserva el mínimo de 14 px y aparece la zona de desplazamiento; se verificó que permite llegar al final. La apertura, el cierre con un nuevo clic y el teclado siguen funcionando. Consola sin errores ni advertencias. La captura móvil documentada se actualizó con esta versión.
 
 La compilación final de producción (`npm run build`) y TypeScript finalizaron correctamente después del ajuste de nitidez.
+
+## Calidad de la imagen al abrir el papel
+
+Se eliminó la ampliación CSS de una capa pequeña: el papel ahora cambia sus dimensiones reales durante la animación. En la comprobación a 390 × 844, antes tenía 111 px de ancho de layout ampliados a 358 px con una escala de 3,2278. Ahora tiene 358 px tanto de layout como de pantalla, con transformación de escala 1. El canvas se ajusta al tamaño abierto con entre 2 y 3 píxeles de imagen por píxel CSS, incluyendo pantallas de densidad 3. Se conservan los nueve assets originales y los mensajes.
+
+Se comprobaron los cuatro corazones a 390 × 844, con canvas de 716 px de ancho, texto completo y cierre con un nuevo clic. El cambio a 844 × 390 recalculó el canvas y mantuvo el papel centrado. Consola sin errores ni advertencias. La prueba añadida verifica cobertura de píxeles para distintos tamaños y densidades, redondeo hacia arriba y límite de memoria. Pendiente la comprobación visual en un teléfono físico.
+
+Las 31 pruebas de código y la compilación final de producción, incluida la comprobación TypeScript, finalizaron correctamente con este cambio.
