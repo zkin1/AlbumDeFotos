@@ -1,0 +1,13 @@
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+.vercel/
+test-results/
+next-env.d.ts
+playwright-report/
+
+.env
+.env.*
+!.env.example
+npm-debug.log*
