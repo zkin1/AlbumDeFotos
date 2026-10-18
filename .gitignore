@@ -11,3 +11,8 @@ playwright-report/
 .env.*
 !.env.example
 npm-debug.log*
+
+/photos-originals/
+/.album-tools/
+.vercel
+.env*

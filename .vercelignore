@@ -1,0 +1,14 @@
+.git
+.next
+node_modules
+.vercel
+photos-originals
+.album-tools
+docs
+scripts
+tests
+*.tsbuildinfo
+*.png
+.env
+.env.*
+!.env.example

@@ -1,0 +1,25 @@
+.origami-root { position: relative; aspect-ratio: 720 / 560; max-width: calc(100vw - 32px); pointer-events: none; }
+.origami-stage, .origami-float, .origami-button, .origami-paper, .origami-canvas, .origami-fallback { position: absolute; inset: 0; width: 100%; height: 100%; }
+.origami-stage { transform-origin: 50% 50%; will-change: transform; }
+.origami-float { transform-origin: 50% 65%; filter: drop-shadow(0 5px 5px rgb(51 40 27 / 13%)); }
+.origami-button { border: 0; padding: 0; background: transparent; pointer-events: auto; touch-action: manipulation; border-radius: 30%; outline-offset: -12px; }
+.origami-button:disabled { cursor: progress; }
+.origami-button:focus-visible { outline: 1px dashed #827c71; }
+.origami-paper { display: block; transition: filter .3s ease; }
+.origami-button:not(:disabled):hover .origami-paper { filter: brightness(1.035) drop-shadow(0 2px 2px rgb(51 40 27 / 10%)); }
+.origami-canvas { opacity: 0; pointer-events: none; }
+.origami-fallback { pointer-events: none; object-fit: contain; }
+.origami-paper[data-ready="true"] .origami-canvas { opacity: 1; }
+.origami-paper[data-ready="true"] .origami-fallback { visibility: hidden; }
+.origami-message-stage { position: absolute; pointer-events: none; }
+.origami-message { position: absolute; left: 28.5%; top: 39.5%; width: 43%; height: 25%; box-sizing: border-box; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #90877b55 transparent; opacity: 0; visibility: hidden; color: var(--paper-color); font-family: var(--paper-font); font-weight: 400; font-style: italic; text-align: var(--paper-align); pointer-events: none; }
+.origami-message p { min-height: 100%; display: flex; flex-direction: column; justify-content: center; margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.25; }
+.origami-message[inert] { pointer-events: none; }
+.origami-message:focus-visible { outline: .5px solid #827c71; outline-offset: 2px; }
+.origami-readHint { position: absolute; top: 66%; left: 28.5%; width: 43%; text-align: center; color: #70675d; font: italic 14px Georgia, serif; pointer-events: none; }
+.origami-hint { position: absolute; left: 50%; bottom: 1%; transform: translateX(-50%); font: italic 12px Georgia, serif; color: #918b82; letter-spacing: .03em; transition: opacity .2s ease; }
+.origami-hint[data-hidden="true"] { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .origami-stage { will-change: auto; } }
+
+
+.origami-message[role=region]:not([inert]) { pointer-events: auto; }
