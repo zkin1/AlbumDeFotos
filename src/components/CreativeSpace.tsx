@@ -48,7 +48,6 @@ export function CreativeSpace() {
       sceneRef.current = createSpaceScene(hostRef.current, first.visible, {
         select(index) { if (mounted) { setSelected(index); setMessage(null); } },
         cursor(x, y) { xTo(x); yTo(y); },
-        motion(speed) { audio.motion(speed); },
         heart(index, anchor) {
           if (!mounted) return;
           setSelectedHeart(index === null || !anchor ? null : {index,anchor});

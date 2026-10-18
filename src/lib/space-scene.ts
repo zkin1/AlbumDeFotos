@@ -7,7 +7,6 @@ import { CAMERA_Z, FIELD_OF_VIEW, TILE_ASPECT, coverUv, expandedFrame, sceneMetr
 type Callbacks = {
   select: (index: number | null) => void;
   cursor: (x: number, y: number) => void;
-  motion: (speed: number) => void;
   ready: () => void;
   failure: (message: string) => void;
   heart: (index: number | null, anchor?: HeartAnchor) => void;
@@ -349,7 +348,6 @@ export function createSpaceScene(host: HTMLElement, items: AlbumItem[], callback
       xSmooth += (xTarget - xSmooth) * smoothing; ySmooth += (yTarget - ySmooth) * smoothing;
       increment.setFromAxisAngle(axisY, xSmooth - previousX); rotation.premultiply(increment);
       increment.setFromAxisAngle(axisX, ySmooth - previousY); rotation.premultiply(increment);
-      callbacks.motion(selected === null && !updating ? Math.hypot(xSmooth-previousX,ySmooth-previousY) : 0);
       previousX = xSmooth; previousY = ySmooth;
       if (!interacted && !reducedMotion) { increment.setFromAxisAngle(autoAxis, 0.001 * frame); rotation.premultiply(increment); }
       rotation.normalize(); group.quaternion.copy(rotation); inverse.copy(rotation).invert();

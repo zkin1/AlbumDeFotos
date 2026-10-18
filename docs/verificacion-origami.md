@@ -51,3 +51,9 @@ Howler.js 2.2.4 reproduce dos sonidos originales generados localmente: roce de 0
 En el navegador se arrastró la esfera, se usó la rueda y se abrieron y cerraron los cuatro mensajes después de barajar. Cada frase siguió correspondiendo a su corazón. A 390 × 844, el papel conserva 358 px reales de ancho y un canvas de 716 px, sin estiramiento CSS. No hubo errores ni advertencias en consola. La valoración auditiva final del volumen en un teléfono físico sigue pendiente.
 
 Validación final de esta versión: 38 pruebas correctas y compilación de producción correcta, incluida la revisión TypeScript.
+
+## Retirada del sonido al arrastrar
+
+Se elimina el efecto de arrastre, su archivo WAV y el aviso de movimiento enviado desde la escena. Se conserva el sonido del papel original y su volumen de 0,14. Las pruebas del controlador comprueban que la interacción por sí sola no reproduce audio, que solo se carga el papel y que siguen funcionando la apertura, la cancelación durante la carga, la pausa y la liberación de recursos.
+
+Validación de este cambio: 37 pruebas correctas y compilación de producción correcta, incluida TypeScript. No se realizó una escucha en un teléfono físico.

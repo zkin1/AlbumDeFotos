@@ -9,7 +9,7 @@ RATE = 22050
 OUTPUT = Path(__file__).resolve().parents[1] / "public" / "audio"
 OUTPUT.mkdir(parents=True, exist_ok=True)
 
-for name, duration, seed, peak in [("sphere-glide", .36, 2026, .48), ("paper-open", 1.08, 1841, .62)]:
+for name, duration, seed, peak in [("paper-open", 1.08, 1841, .62)]:
     rng = random.Random(seed)
     samples = []
     low = slow = 0.0
@@ -20,10 +20,7 @@ for name, duration, seed, peak in [("sphere-glide", .36, 2026, .48), ("paper-ope
         slow += .035 * (noise - slow)
         texture = low - slow + .025 * noise
         edge = math.sin(math.pi * index / (round(duration * RATE) - 1)) ** 1.4
-        if name == "paper-open":
-            envelope = sum(level * math.exp(-.5 * ((t-center)/width) ** 2) for center, width, level in [(.13,.045,.7),(.31,.08,1),(.55,.045,.7),(.72,.075,.85),(.9,.05,.55)])
-        else:
-            envelope = .65 + .35 * math.sin(2 * math.pi * 7 * t) ** 2
+        envelope = sum(level * math.exp(-.5 * ((t-center)/width) ** 2) for center, width, level in [(.13,.045,.7),(.31,.08,1),(.55,.045,.7),(.72,.075,.85),(.9,.05,.55)])
         samples.append(texture * envelope * edge)
     gain = peak / max(abs(value) for value in samples)
     data = b"".join(struct.pack("<h", round(max(-1, min(1, value * gain)) * 32767)) for value in samples)
